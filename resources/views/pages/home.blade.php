@@ -18,7 +18,7 @@
 
     <!-- logo -->
     <div class="text-center my-3">
-        <img src="{{ asset('assets/images/logo.jpg') }}" alt="logo" class="img-fluid">
+        <img src="{{ asset('assets/images/logo.jpg') }}" alt="logo" class="img-fluid" width="250px">
     </div>
 
     <h3 class="text-center text-secondary mb-5">
