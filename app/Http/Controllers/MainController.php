@@ -79,7 +79,7 @@ class MainController extends Controller
     public function printExercicios()
     {
         //verificar se existe exercicios na sessão
-        if(!session()->has('exercises')){
+        if (!session()->has('exercises')) {
             return redirect()->route('home');
         }
 
@@ -88,29 +88,56 @@ class MainController extends Controller
 
         //imprindo na tela
         echo '<pre>';
-        echo '<h1>Exercicios de matemática (' . env('APP_NAME') .') </h1>';
-         echo '<hr>';
+        echo '<h1>Exercicios de matemática (' . env('APP_NAME') . ') </h1>';
+        echo '<hr>';
 
-         foreach($exercises as $exercise){
-          echo '<h2><small>' . str_pad($exercise['exercise_number'], 2, "0", STR_PAD_LEFT) . ' >> </small> ' . $exercise['exercise'] .'</h2>';
-         }
+        foreach ($exercises as $exercise) {
+            echo '<h2><small>' . str_pad($exercise['exercise_number'], 2, "0", STR_PAD_LEFT) . ' >> </small> ' . $exercise['exercise'] . '</h2>';
+        }
 
-         //solução
-         echo '<hr>';
-         echo '<small>Soluções</small><br>';
+        //solução
+        echo '<hr>';
+        echo '<small>Soluções</small><br>';
 
-            foreach($exercises as $exercise){
-          echo '<small>' . str_pad($exercise['exercise_number'], 2, "0", STR_PAD_LEFT) . ' >>  ' . $exercise['sollution'] .'</small><br>';
-         }
-
-
-
-
+        foreach ($exercises as $exercise) {
+            echo '<small>' . str_pad($exercise['exercise_number'], 2, "0", STR_PAD_LEFT) . ' >>  ' . $exercise['sollution'] . '</small><br>';
+        }
     }
 
     public function exportExercicios()
     {
-        echo 'exportar exercicios para um arquivo de texto';
+        //verificar se existe exercicios na sessão
+        if (!session()->has('exercises')) {
+            return redirect()->route('home');
+        }
+
+        // recuperando da sessão uma variável
+        $exercises = session('exercises');
+
+
+        //Downloand do exercicios
+        $filename = 'exercises_' . env('APP_NAME') . '_' . date('YmdHis') . '.txt';
+
+        //conteudo
+        $content = '';
+
+        foreach ($exercises as $exercise) {
+            $content .=  str_pad($exercise['exercise_number'], 2, "0", STR_PAD_LEFT) . ' > ' . $exercise['exercise'] . "\n";
+        }
+
+        //solução
+
+        $content .= "\n";
+        $content .=  "Soluções\n" . str_repeat('-', 20) . "\n";
+
+
+        foreach ($exercises as $exercise) {
+            $content .=  str_pad($exercise['exercise_number'], 2, "0", STR_PAD_LEFT) . ' > ' . $exercise['sollution'] . "\n";
+        }
+
+        return response($content)
+          ->header('Content-Type', 'text/plain')
+           ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
 
